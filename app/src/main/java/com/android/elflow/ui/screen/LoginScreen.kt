@@ -13,9 +13,11 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -29,7 +31,9 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android.elflow.R
+import com.android.elflow.repository.DataStorePreferences
 import com.android.elflow.repository.PreferencesManager
+import kotlinx.coroutines.launch
 
 
 @Preview
@@ -37,10 +41,13 @@ import com.android.elflow.repository.PreferencesManager
 fun LoginScreen(modifier: Modifier = Modifier) {
 
     val context = LocalContext.current
-    val preferencesManager = remember { PreferencesManager(context) }
+    val scope = rememberCoroutineScope()
+    val dataStoreInstance = DataStorePreferences(context) //when instantiated this object did not showed any error for params ??
+
+    //val preferencesManager = remember { PreferencesManager(context) }
 
     var emailValue by rememberSaveable { mutableStateOf("") }
-    var updatedData by rememberSaveable { mutableStateOf(preferencesManager.getEmail()) }
+    //var updatedData by rememberSaveable { mutableStateOf(preferencesManager.getEmail()) }
 
     Column(
         modifier.fillMaxSize(),
@@ -50,10 +57,13 @@ fun LoginScreen(modifier: Modifier = Modifier) {
         TextFieldComposable("Email", emailValue, onEmailChange = { emailValue = it })
         PasswordTextFieldComposable()
         ButtonComposable(stringResource(R.string.signin_btn), {
-            preferencesManager.saveEmail(emailValue)
-            updatedData = preferencesManager.getEmail()
+            scope.launch {
+                dataStoreInstance.saveToDataStore(emailValue)
+            }
         })
-        BasicText("Email is $updatedData")
+
+        val dataStoreUpdatedValue = dataStoreInstance.getData().collectAsState(initial = "")
+        BasicText("Email is ${dataStoreUpdatedValue.value}")
     }
 }
 

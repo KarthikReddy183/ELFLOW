@@ -1,4 +1,4 @@
-package com.android.elflow.repository
+package com.android.elflow.data.repository
 
 import android.content.Context
 import android.content.SharedPreferences

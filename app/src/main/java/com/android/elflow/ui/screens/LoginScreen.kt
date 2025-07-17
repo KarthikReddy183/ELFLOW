@@ -1,4 +1,4 @@
-package com.android.elflow.ui.screen
+package com.android.elflow.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,10 +13,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -30,15 +30,20 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.elflow.R
-import com.android.elflow.repository.DataStorePreferences
-import com.android.elflow.repository.PreferencesManager
+import com.android.elflow.data.repository.DataStorePreferences
 import kotlinx.coroutines.launch
+import androidx.compose.runtime.remember
+import com.android.elflow.data.local.db.UserDetailsDataBase
+import com.android.elflow.data.repository.UserDetailsRepository
+import com.android.elflow.viewmodel.UserDetailsViewModel
+import com.android.elflow.viewmodel.UserDetailsViewModelFactory
 
 
 @Preview
 @Composable
-fun LoginScreen(modifier: Modifier = Modifier) {
+fun DataStoreLoginScreen(modifier: Modifier = Modifier) {
 
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -67,6 +72,39 @@ fun LoginScreen(modifier: Modifier = Modifier) {
     }
 }
 
+@Composable
+fun RoomDbLoginScreen(modifier: Modifier = Modifier) {
+
+    val context = LocalContext.current
+    val db = remember { UserDetailsDataBase.getInstance(context) }
+    val repository = remember { UserDetailsRepository(db.usersDao()) }
+    val viewModel: UserDetailsViewModel = viewModel(
+        factory = UserDetailsViewModelFactory(repository)
+    )
+
+    var inputEmail by remember { mutableStateOf("test@example.com") }
+    val storedEmail by viewModel.emailState.collectAsState()
+
+    Column(
+        modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        LaunchedEffect(Unit) {
+            viewModel.loadEmail()
+        }
+        TextFieldComposable("Email", inputEmail, onEmailChange = { inputEmail = it })
+        PasswordTextFieldComposable()
+        ButtonComposable(
+            stringResource(R.string.signin_btn),
+            {
+                if (inputEmail.isNotBlank()) {
+                    viewModel.saveEmail(inputEmail)
+                }
+            })
+        BasicText("Email is $storedEmail")
+    }
+}
 
 @Composable
 fun TextFieldComposable(

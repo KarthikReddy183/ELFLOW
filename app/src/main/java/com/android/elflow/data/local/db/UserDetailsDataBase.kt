@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.android.elflow.data.local.dao.UserDetailsDao
 import com.android.elflow.data.local.entity.UserDetailsEntity
 
-@Database(entities = [UserDetailsEntity::class], version = 1)
+@Database(entities = [UserDetailsEntity::class], version = 2)
 abstract class UserDetailsDataBase: RoomDatabase() {
     abstract fun usersDao(): UserDetailsDao
 
@@ -20,8 +20,7 @@ abstract class UserDetailsDataBase: RoomDatabase() {
                     context.applicationContext,
                     UserDetailsDataBase::class.java,
                     "email_db"
-                ).build().also { INSTANCE = it }
+                ).fallbackToDestructiveMigration(false).build().also { INSTANCE = it }
             }
     }
-
 }

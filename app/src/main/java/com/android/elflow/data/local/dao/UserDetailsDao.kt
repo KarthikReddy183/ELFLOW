@@ -11,7 +11,7 @@ interface UserDetailsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveEmail(emailEntity: UserDetailsEntity)
 
-    @Query("SELECT * FROM user_details WHERE id = 0")
+    @Query("SELECT * FROM user_details WHERE id = 1")
     suspend fun getEmail(): UserDetailsEntity?
 
 }

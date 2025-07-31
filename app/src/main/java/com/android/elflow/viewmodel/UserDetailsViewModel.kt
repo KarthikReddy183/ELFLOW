@@ -1,5 +1,7 @@
 package com.android.elflow.viewmodel
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.elflow.data.repository.UserDetailsRepository
@@ -12,11 +14,21 @@ class UserDetailsViewModel(private val usersRepository: UserDetailsRepository) :
     private val _emailState = MutableStateFlow<String?>(null)
     val emailState = _emailState.asStateFlow()
 
+    private val _data = MutableLiveData<String>() // internal modification
+
+    val data: LiveData<String> get() = _data // Exposed as live data to prevent external modification
+
+
+    private val _pwdValue = MutableLiveData<String>()
+
+    val pwd: LiveData<String> = _pwdValue
+
     fun saveEmail(email: String) {
         viewModelScope.launch {
             usersRepository.saveEmail(email)
             _emailState.value = email
         }
+        _data.value = email
     }
 
     fun loadEmail() {
@@ -25,5 +37,4 @@ class UserDetailsViewModel(private val usersRepository: UserDetailsRepository) :
             _emailState.value = email
         }
     }
-
 }

@@ -53,6 +53,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.datastore)
     implementation(libs.androidx.material3)
+    implementation("androidx.lifecycle:lifecycle-livedata:2.1.0")
     implementation(libs.room.runtime)
     implementation(libs.androidx.viewmodel)
     implementation(libs.androidx.lifecycle.livedata.ktx)

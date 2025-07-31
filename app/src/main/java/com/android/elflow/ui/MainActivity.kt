@@ -10,6 +10,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.android.elflow.ui.screens.RoomDbLoginScreen
+import com.android.elflow.ui.screens.SignUpScreen
 import com.android.elflow.ui.theme.ELFLOWTheme
 
 class MainActivity : ComponentActivity() {
@@ -20,10 +21,20 @@ class MainActivity : ComponentActivity() {
             ELFLOWTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Surface {
-                        RoomDbLoginScreen(modifier = Modifier.padding(innerPadding))
+                        //RoomDbLoginScreen(modifier = Modifier.padding(innerPadding))
+                        SignUpScreen(modifier = Modifier.padding(innerPadding))
                     }
                 }
             }
         }
+
+
+      /*  var hello: String? = ""
+
+        viewModel.pwd.observe(this, Observer {
+            data -> hello = viewModel.pwd.value
+        })*/
     }
+
+
 }
